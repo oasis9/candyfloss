@@ -1,10 +1,9 @@
 package dank.meme.blockfountain;
 
-import static org.bukkit.ChatColor.GRAY;
 import static org.bukkit.ChatColor.AQUA;
-import static org.bukkit.ChatColor.RED;
+import static org.bukkit.ChatColor.GRAY;
 import static org.bukkit.ChatColor.GREEN;
-import static org.bukkit.ChatColor.LIGHT_PURPLE;
+import static org.bukkit.ChatColor.RED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,7 +111,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
 			ItemStack is = new ItemStack(Material.GHAST_TEAR);
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(GREEN + "Block Fountain " + GRAY + "(Right Click)");
-			im.setLore(Arrays.asList(LIGHT_PURPLE + "Pretty"));
+			im.setLore(Arrays.asList(AQUA + "Pretty colors"));
 			is.setItemMeta(im);
 			pl.getInventory().addItem(is);
 		}
