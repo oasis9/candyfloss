@@ -1,0 +1,5 @@
+package dank.meme.explodingeggs;
+
+public class EventListener {// implements Listener {
+	
+}
