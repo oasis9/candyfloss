@@ -47,21 +47,21 @@ public class BlockFountain extends JavaPlugin implements Listener {
 		final Player pl = e.getPlayer();
 		if (!e.getHand().equals(EquipmentSlot.HAND))
 			return;
-		UUID uuid = pl.getUniqueId();
-		if (cooldowns.containsKey(uuid)) {
-			Long start = cooldowns.get(uuid);
-			Long now = System.currentTimeMillis();
-			Integer seconds = (int) ((now - start) / 1000);
-			Integer cooldown = 5;
-			Integer time = cooldown - seconds;
-			if (time > 0) {
-				pl.sendMessage(RED + "Thou shalt not do that! (For another " + AQUA + time + " seconds" + RED + ")");
-				return;
-			} else
-				cooldowns.remove(uuid);
-		}
 		ItemStack is = e.getItem();
 		if (is != null && is.getType().equals(Material.GHAST_TEAR) && is.hasItemMeta() && ChatColor.stripColor(is.getItemMeta().getDisplayName()).equalsIgnoreCase("Block Fountain (Right Click)")) {
+			UUID uuid = pl.getUniqueId();
+			if (cooldowns.containsKey(uuid)) {
+				Long start = cooldowns.get(uuid);
+				Long now = System.currentTimeMillis();
+				Integer seconds = (int) ((now - start) / 1000);
+				Integer cooldown = 5;
+				Integer time = cooldown - seconds;
+				if (time > 0) {
+					pl.sendMessage(RED + "Thou shalt not do that! (For another " + AQUA + time + " seconds" + RED + ")");
+					return;
+				} else
+					cooldowns.remove(uuid);
+			}
         	cooldowns.put(uuid, System.currentTimeMillis());
         	new BukkitRunnable() {
         		int runs = 0;
@@ -79,7 +79,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
         			im.setDisplayName(UUID.randomUUID().toString());
         			pop.setItemMeta(im);
         			final Item item = pl.getWorld().dropItem(pl.getEyeLocation(), pop);
-        			item.setVelocity(new Vector(new Random().nextDouble() - .5, 1, new Random().nextDouble() - .5));
+        			item.setVelocity(new Vector(new Random().nextDouble() / 2 - .25, .5, new Random().nextDouble() / 2 - .25));
         			final int eid = item.getEntityId();
         			entityIds.add(eid);
         			new BukkitRunnable() {
@@ -87,7 +87,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
         					item.remove();
         					entityIds.remove(entityIds.indexOf(eid));
         				}
-        			}.runTaskLater(BlockFountain.getPlugin(BlockFountain.class), 20 * 5);
+        			}.runTaskLater(BlockFountain.getPlugin(BlockFountain.class), 20 * 3);
         		}
         	}.runTaskTimer(this, 0, 20 / 10);
 		}
