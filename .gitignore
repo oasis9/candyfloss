@@ -1,6 +1,8 @@
 .metadata
 .metadata/
 .recommenders/
+output/
+dependencies/
 bin/
 tmp/
 *.tmp
