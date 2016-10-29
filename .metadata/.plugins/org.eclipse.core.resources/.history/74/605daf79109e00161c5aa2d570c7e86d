@@ -53,7 +53,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
 			Long start = cooldowns.get(uuid);
 			Long now = System.currentTimeMillis();
 			Integer seconds = (int) ((now - start) / 1000);
-			Integer cooldown = 5;
+			Integer cooldown = 10;
 			Integer time = cooldown - seconds;
 			if (time > 0) {
 				pl.sendMessage(RED + "Thou shalt not do that! (For another " + AQUA + time + " seconds" + RED + ")");
@@ -62,7 +62,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
 				cooldowns.remove(uuid);
 		}
 		ItemStack is = e.getItem();
-		if (is != null && is.getType().equals(Material.GHAST_TEAR) && is.hasItemMeta() && ChatColor.stripColor(is.getItemMeta().getDisplayName()).equalsIgnoreCase("Block Fountain (Right Click)")) {
+		if (is != null && is.getType().equals(Material.GHAST_TEAR) && is.hasItemMeta() && ChatColor.stripColor(is.getItemMeta().getDisplayName()).equalsIgnoreCase("Block Fountain (Right Click)"))
         	cooldowns.put(uuid, System.currentTimeMillis());
         	new BukkitRunnable() {
         		int runs = 0;
@@ -91,7 +91,6 @@ public class BlockFountain extends JavaPlugin implements Listener {
         			}.runTaskLater(BlockFountain.getPlugin(BlockFountain.class), 20 * 5);
         		}
         	}.runTaskTimer(this, 0, 20 / 10);
-		}
 	}
 	
 	@EventHandler
