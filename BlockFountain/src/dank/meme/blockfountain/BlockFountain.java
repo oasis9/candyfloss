@@ -50,7 +50,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
 		ItemStack is = e.getItem();
 		if (is != null && is.getType().equals(Material.GHAST_TEAR) && is.hasItemMeta() && ChatColor.stripColor(is.getItemMeta().getDisplayName()).equalsIgnoreCase("Block Fountain (Right Click)")) {
 			UUID uuid = pl.getUniqueId();
-			if (cooldowns.containsKey(uuid)) {
+			if (!pl.hasPermission("blockfountain.bypass") && cooldowns.containsKey(uuid)) {
 				Long start = cooldowns.get(uuid);
 				Long now = System.currentTimeMillis();
 				Integer seconds = (int) ((now - start) / 1000);
@@ -62,7 +62,8 @@ public class BlockFountain extends JavaPlugin implements Listener {
 				} else
 					cooldowns.remove(uuid);
 			}
-        	cooldowns.put(uuid, System.currentTimeMillis());
+			if (!pl.hasPermission("blockfountain.bypass"))
+				cooldowns.put(uuid, System.currentTimeMillis());
         	new BukkitRunnable() {
         		int runs = 0;
         		int max = 30;
@@ -73,7 +74,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
         				cancel();
         				return;
         			}
-        			List<Integer> dataValues = Arrays.asList(0, 3, 11, 9);
+        			List<Integer> dataValues = Arrays.asList(0, 1, 2, 3, 4, 11, 9);
         			ItemStack pop = new ItemStack(Material.WOOL, 1, dataValues.get(new Random().nextInt(dataValues.size())).byteValue());
         			ItemMeta im = pop.getItemMeta();
         			im.setDisplayName(UUID.randomUUID().toString());
@@ -87,7 +88,7 @@ public class BlockFountain extends JavaPlugin implements Listener {
         					item.remove();
         					entityIds.remove(entityIds.indexOf(eid));
         				}
-        			}.runTaskLater(BlockFountain.getPlugin(BlockFountain.class), 20 * 3);
+        			}.runTaskLater(BlockFountain.getPlugin(BlockFountain.class), 20 * 2);
         		}
         	}.runTaskTimer(this, 0, 20 / 10);
 		}
