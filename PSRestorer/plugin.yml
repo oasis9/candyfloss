@@ -3,7 +3,6 @@ main: net.oasis9.aeva.psrestorer.PSRestorer
 version: 1
 authors: [Bob Sharp, oasis9, bobdesu]
 depend: [WorldEdit]
-
 commands:
   pr:
   psr:
