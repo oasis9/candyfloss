@@ -248,14 +248,13 @@ public class PSRestorer extends JavaPlugin {
 				}
 			}
 		}
-		if (fw == null || pw == null) {
+		if (fw == null || pw == null)
 			try {
 				fw = new FileWriter(saveTo, true);
 				pw = new PrintWriter(fw);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
 		pw.println(msg);
 		pw.flush();
 	}

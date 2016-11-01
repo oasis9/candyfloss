@@ -27,28 +27,28 @@ local.properties
 *.pydevproject
 
 # CDT-specific (C/C++ Development Tooling)
-.cproject
+*.cproject
 
 # JDT-specific (Eclipse Java Development Tools)
-.classpath
+*.classpath
 
 # Java annotation processor (APT)
-.factorypath
+*.factorypath
 
 # PDT-specific (PHP Development Tools)
-.buildpath
+*.buildpath
 
 # sbteclipse plugin
-.target
+*.target
 
 # Tern plugin
-.tern-project
+*.tern-project
 
 # TeXlipse plugin
-.texlipse
+*.texlipse
 
 # STS (Spring Tool Suite)
-.springBeans
+*.springBeans
 
 # Code Recommenders
 .recommenders/
