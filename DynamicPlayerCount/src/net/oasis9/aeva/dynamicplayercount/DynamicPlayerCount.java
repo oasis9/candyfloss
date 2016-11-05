@@ -42,8 +42,8 @@ public class DynamicPlayerCount extends JavaPlugin {
 				if (sender instanceof Player && ((Player) sender).hasPermission(permissionView()))
 					showMaxPlayers(sender);
 			}
-		else if (sender instanceof Player && ((Player) sender).hasPermission(permissionView()))
-				showMaxPlayers(sender);
+		else if ((sender instanceof Player && ((Player) sender).hasPermission(permissionView())) || !(sender instanceof Player))
+			showMaxPlayers(sender);
 		return true;
 	}
 	
@@ -55,16 +55,26 @@ public class DynamicPlayerCount extends JavaPlugin {
 		return getConfig().getString("permissions.view");
 	}
 	
+	public String messageKick() {
+		return ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.kick"));
+	}
+	
+	public String messageView() {
+		return ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.view")).replace("%maxplayers%", "" + getMaxPlayers());
+	}
+	
+	public String messageModify() {
+		return ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.modify"));
+	}
+	
 	public void showMaxPlayers(CommandSender sender) {
-		String msg = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + ChatColor.BOLD + "Aeva" + ChatColor.DARK_GRAY + "] " + ChatColor.GREEN + "maxPlayers is currently set to " + ChatColor.AQUA + getMaxPlayers();
+		String msg = messageView();
 		if (sender instanceof Player) {
-			if (((Player) sender).hasPermission(permissionModify()))
-				msg += "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + ChatColor.BOLD + "Aeva" + ChatColor.DARK_GRAY + "] " + ChatColor.GREEN + "To modify it, type /mp [int]";
 			sender.sendMessage(msg);
-		} else {
-			msg += "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + ChatColor.BOLD + "Aeva" + ChatColor.DARK_GRAY + "] " + ChatColor.GREEN + "To modify it, type /mp [int]";
+			if (((Player) sender).hasPermission(permissionModify()))
+				sender.sendMessage(messageModify());
+		} else
 			sender.sendMessage(ChatColor.stripColor(msg));
-		}
 	}
 	
 	public int getMaxPlayers() {
@@ -84,6 +94,10 @@ public class DynamicPlayerCount extends JavaPlugin {
 						Field mp = dpl.getClass().getSuperclass().getDeclaredField("maxPlayers");
 						if (mp != null) {
 							mp.setAccessible(true);
+							if (Bukkit.getOnlinePlayers().size() > getMaxPlayers()) {
+								while (Bukkit.getOnlinePlayers().size() > getMaxPlayers())
+									Bukkit.getOnlinePlayers().iterator().next().kickPlayer(messageKick());
+							}
 							mp.set(dpl, maxPlayers);
 						} else
 							Bukkit.broadcastMessage("mp null");
@@ -91,9 +105,6 @@ public class DynamicPlayerCount extends JavaPlugin {
 						Bukkit.broadcastMessage("dpl null");
 		        } else
 					Bukkit.broadcastMessage("pl null");
-			/*Field playerList = ms.getClass().getField("v");
-			playerList.setAccessible(true);
-			Field maxPlayers = playerList;*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			Bukkit.broadcastMessage("Error: " + e.getMessage() + " - " + e.getCause() + " [DPC has gone to shit]");
