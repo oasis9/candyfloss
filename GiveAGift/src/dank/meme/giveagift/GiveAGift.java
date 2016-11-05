@@ -54,8 +54,13 @@ public class GiveAGift extends JavaPlugin {
 			            FireworkEffect effect = FireworkEffect.builder().withColor(Color.RED).withFade(Color.GREEN).with(Type.STAR).flicker(true).build();
 			            fwm.addEffect(effect);
 			            fw.setFireworkMeta(fwm);
-			            fw.detonate();
-						as.remove();
+			            new BukkitRunnable() {
+			            	@Override
+			            	public void run() {
+			            		fw.detonate();
+			            		as.remove();
+			            	}
+			            }.runTaskLater(getPlugin(GiveAGift.class), 1);
 						cancel();
 						return;
 					}
