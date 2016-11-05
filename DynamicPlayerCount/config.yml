@@ -1,0 +1,4 @@
+permissions:
+  modify: maxplayers.modify
+  view: maxplayers.view
+maxplayers: 300

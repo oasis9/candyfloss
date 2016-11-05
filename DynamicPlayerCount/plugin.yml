@@ -1,0 +1,5 @@
+name: DynamicPlayerCount
+main: net.oasis9.hpbt.dynamicplayercount.DynamicPlayerCount
+version: 1
+commands:
+  mp:

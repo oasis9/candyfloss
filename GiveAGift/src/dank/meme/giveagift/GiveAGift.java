@@ -1,5 +1,8 @@
 package dank.meme.giveagift;
 
+import java.util.Random;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -37,7 +40,7 @@ public class GiveAGift extends JavaPlugin {
 			ArmorStand as = (ArmorStand) l.getWorld().spawnEntity(l, EntityType.ARMOR_STAND);
 			as.setVisible(false);
 			as.setGravity(false);
-			as.setHelmet(new ItemStack(Material.ENDER_CHEST));
+			as.setHelmet(new ItemStack(new Random().nextBoolean() && new Random().nextBoolean() ? Material.ENDER_CHEST : Material.TNT));
 			new BukkitRunnable() {
 				int i = 0;
 				@Override
@@ -49,15 +52,24 @@ public class GiveAGift extends JavaPlugin {
 					hlx.setYaw((float) (i * xpow % 360));
 					hlx.add(hlx.getDirection().multiply(0.5));
 					if (i > 360 / xpow) {
-						Firework fw = (Firework) l.getWorld().spawnEntity(l.clone().add(0, 2, 0), EntityType.FIREWORK);
-			            FireworkMeta fwm = fw.getFireworkMeta();
-			            FireworkEffect effect = FireworkEffect.builder().withColor(Color.RED).withFade(Color.GREEN).with(Type.STAR).flicker(true).build();
-			            fwm.addEffect(effect);
-			            fw.setFireworkMeta(fwm);
-			            new BukkitRunnable() {
+						if (as.getHelmet().getType().equals(Material.ENDER_CHEST)) {
+							Firework fw = (Firework) l.getWorld().spawnEntity(l.clone().add(0, 2, 0), EntityType.FIREWORK);
+			            	FireworkMeta fwm = fw.getFireworkMeta();
+			            	FireworkEffect effect = FireworkEffect.builder().withColor(Color.WHITE).withColor(Color.RED).withColor(Color.GREEN).withFade(Color.GRAY).with(Type.STAR).trail(true).flicker(true).build();
+			            	fwm.addEffect(effect);
+			            	fw.setFireworkMeta(fwm);
+				            new BukkitRunnable() {
+				            	@Override
+				            	public void run() {
+				            		fw.detonate();
+				            		as.remove();
+				            	}
+				            }.runTaskLater(getPlugin(GiveAGift.class), 1);
+						} else
+				            new BukkitRunnable() {
 			            	@Override
 			            	public void run() {
-			            		fw.detonate();
+			            		as.getWorld().createExplosion(as.getLocation(), (float) 5);
 			            		as.remove();
 			            	}
 			            }.runTaskLater(getPlugin(GiveAGift.class), 1);
@@ -68,9 +80,11 @@ public class GiveAGift extends JavaPlugin {
 					opp.subtract(hlx.getDirection());
 					PacketPlayOutWorldParticles helix1 = new PacketPlayOutWorldParticles(EnumParticle.FIREWORKS_SPARK, true, (float) hlx.getX(), (float) hlx.getY(), (float) hlx.getZ(), 0, 0, 0, 0, 1);
 					PacketPlayOutWorldParticles helix2 = new PacketPlayOutWorldParticles(EnumParticle.FIREWORKS_SPARK, true, (float) opp.getX(), (float) opp.getY(), (float) opp.getZ(), 0, 0, 0, 0, 1);
-					PlayerConnection pc = ((CraftPlayer) pl).getHandle().playerConnection;
-					pc.sendPacket(helix1);
-					pc.sendPacket(helix2);
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						PlayerConnection pc = ((CraftPlayer) p).getHandle().playerConnection;
+						pc.sendPacket(helix1);
+						pc.sendPacket(helix2);
+					}
 					i++;
 				}
 			}.runTaskTimer(this, 10, 1);
