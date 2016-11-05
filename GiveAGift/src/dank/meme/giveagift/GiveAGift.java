@@ -1,5 +1,8 @@
 package dank.meme.giveagift;
 
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -7,8 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -44,6 +49,12 @@ public class GiveAGift extends JavaPlugin {
 					hlx.setYaw((float) (i * xpow % 360));
 					hlx.add(hlx.getDirection().multiply(0.5));
 					if (i > 360 / xpow) {
+						Firework fw = (Firework) l.getWorld().spawnEntity(l.clone().add(0, 2, 0), EntityType.FIREWORK);
+			            FireworkMeta fwm = fw.getFireworkMeta();
+			            FireworkEffect effect = FireworkEffect.builder().withColor(Color.RED).withFade(Color.GREEN).with(Type.STAR).flicker(true).build();
+			            fwm.addEffect(effect);
+			            fw.setFireworkMeta(fwm);
+			            fw.detonate();
 						as.remove();
 						cancel();
 						return;
