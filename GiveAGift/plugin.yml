@@ -2,4 +2,4 @@ name: GiveAGift
 main: dank.meme.giveagift.GiveAGift
 version: 1
 commands:
-  gift
+  gift:
