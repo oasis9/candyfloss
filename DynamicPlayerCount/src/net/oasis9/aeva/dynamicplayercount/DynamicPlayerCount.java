@@ -1,4 +1,4 @@
-package net.oasis9.hpbt.dynamicplayercount;
+package net.oasis9.aeva.dynamicplayercount;
 
 import java.lang.reflect.Field;
 
@@ -28,24 +28,22 @@ public class DynamicPlayerCount extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("mp"))
-			if (args.length > 0)
-				try {
-					if (sender instanceof Player) {
-						if (((Player) sender).hasPermission(permissionModify()))
-							setMaxPlayers(Integer.valueOf(args[0]));
-						showMaxPlayers(sender);
-					} else {
+		if (args.length > 0)
+			try {
+				if (sender instanceof Player) {
+					if (((Player) sender).hasPermission(permissionModify()))
 						setMaxPlayers(Integer.valueOf(args[0]));
-						showMaxPlayers(sender);
-					}
-				} catch (Exception ex) {
-					if (sender instanceof Player && ((Player) sender).hasPermission(permissionView()))
-						showMaxPlayers(sender);
+					showMaxPlayers(sender);
+				} else {
+					setMaxPlayers(Integer.valueOf(args[0]));
+					showMaxPlayers(sender);
 				}
-			else
+			} catch (Exception ex) {
 				if (sender instanceof Player && ((Player) sender).hasPermission(permissionView()))
 					showMaxPlayers(sender);
+			}
+		else if (sender instanceof Player && ((Player) sender).hasPermission(permissionView()))
+				showMaxPlayers(sender);
 		return true;
 	}
 	
