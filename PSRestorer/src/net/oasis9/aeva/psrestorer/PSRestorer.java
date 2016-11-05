@@ -81,12 +81,16 @@ public class PSRestorer extends JavaPlugin {
 		int low = 0;
 		int ainc = 0;
 		int ay = 65;
+		if (args.length > 0)
+			try {
+				ay = Integer.valueOf(args[0]);
+			} catch (Exception ex) {
+				log("[+-] NaN: Continuing with y 65");
+			}
 		int bx = 0;
 		int bz = 0;
-		if (sender instanceof Player)
-			ay = (int) ((Player) sender).getLocation().getY();
 		final int y = ay;
-		log("Determining plot sizes..");
+		log("[+-] Determining plot sizes..");
 		for (int x = 0; x < 2000; x++) {
 			if (!findIncHigh)
 				break;
@@ -118,6 +122,7 @@ public class PSRestorer extends JavaPlugin {
 		final int bgz = bz;
 		if (inc == 0) {
 			log("[+-] No plots to restore!");
+			running = false;
 			return true;
 		}
 		log("[+-] Calculated plot (including road) sizes: " + inc + " blocks");
@@ -160,7 +165,7 @@ public class PSRestorer extends JavaPlugin {
 				} else
 					notFound = true;
 				if (notFound) {
-					if (zNone > 4)
+					if (zNone > 10)
 						break;
 					else
 						zNone++;
@@ -168,7 +173,7 @@ public class PSRestorer extends JavaPlugin {
 					notFoundX = false;
 			}
 			if (notFoundX)
-				if (xNone > 4)
+				if (xNone > 10)
 					break;
 				else
 					xNone++;
@@ -211,7 +216,7 @@ public class PSRestorer extends JavaPlugin {
 				} else
 					notFound = true;
 				if (notFound) {
-					if (zNone > 4)
+					if (zNone > 10)
 						break;
 					else
 						zNone++;
@@ -219,7 +224,7 @@ public class PSRestorer extends JavaPlugin {
 					notFoundX = false;
 			}
 			if (notFoundX)
-				if (xNone > 4)
+				if (xNone > 10)
 					break;
 				else
 					xNone++;
