@@ -40,7 +40,7 @@ public class GiveAGift extends JavaPlugin {
 			ArmorStand as = (ArmorStand) l.getWorld().spawnEntity(l, EntityType.ARMOR_STAND);
 			as.setVisible(false);
 			as.setGravity(false);
-			as.setHelmet(new ItemStack(new Random().nextBoolean() && new Random().nextBoolean() ? Material.ENDER_CHEST : Material.TNT));
+			as.setHelmet(new ItemStack(new Random().nextBoolean() && new Random().nextBoolean() ? Material.TNT : Material.ENDER_CHEST));
 			new BukkitRunnable() {
 				int i = 0;
 				@Override

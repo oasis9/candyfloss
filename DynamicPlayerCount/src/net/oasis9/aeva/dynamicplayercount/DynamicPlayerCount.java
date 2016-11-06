@@ -69,12 +69,14 @@ public class DynamicPlayerCount extends JavaPlugin {
 	
 	public void showMaxPlayers(CommandSender sender) {
 		String msg = messageView();
-		if (sender instanceof Player) {
+		if (sender instanceof Player && ((Player) sender).hasPermission(permissionView())) {
 			sender.sendMessage(msg);
 			if (((Player) sender).hasPermission(permissionModify()))
 				sender.sendMessage(messageModify());
-		} else
+		} else {
 			sender.sendMessage(ChatColor.stripColor(msg));
+			sender.sendMessage(messageModify());
+		}
 	}
 	
 	public int getMaxPlayers() {
