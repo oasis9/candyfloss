@@ -1,5 +1,8 @@
 package dank.meme.giveagift;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -9,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -23,6 +27,15 @@ import net.minecraft.server.v1_9_R1.PlayerConnection;
 
 public class GiveAGift extends JavaPlugin {
 	
+	List<Entity> killSwitch = new ArrayList<Entity>();
+	
+	@Override
+	public void onDisable() {
+		for (Entity e : killSwitch)
+			e.remove();
+	}
+	
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("nah fam");
@@ -35,6 +48,7 @@ public class GiveAGift extends JavaPlugin {
 			l.add(l.getDirection().multiply(2));
 			l.setYaw(l.getYaw() + 180 % 360);
 			ArmorStand as = (ArmorStand) l.getWorld().spawnEntity(l, EntityType.ARMOR_STAND);
+			killSwitch.add(as);
 			as.setVisible(false);
 			as.setGravity(false);
 			as.setHelmet(new ItemStack(Material.ENDER_CHEST));

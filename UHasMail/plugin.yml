@@ -1,0 +1,9 @@
+name: UHasMail
+main: dank.meme.uhasmail.UHasMail
+version: 1
+commands:
+  msg:
+  message:
+  m:
+  w:
+  
