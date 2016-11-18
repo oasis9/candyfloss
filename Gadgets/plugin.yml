@@ -1,0 +1,5 @@
+name: Gadgets
+main: net.oasis9.aeva.gadgets.Gadgets
+version: 1
+commands:
+  trap:
