@@ -1,0 +1,5 @@
+name: PScore
+main: dank.meme.pscore.MainScore
+version: 1
+commands:
+  psdisable:
