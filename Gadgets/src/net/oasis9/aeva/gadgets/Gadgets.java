@@ -1,17 +1,16 @@
 package net.oasis9.aeva.gadgets;
 
+import static org.bukkit.ChatColor.AQUA;
+import static org.bukkit.ChatColor.YELLOW;
+import static org.bukkit.ChatColor.RED;
+
+import java.util.Collection;
+
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import static org.bukkit.ChatColor.YELLOW;
-import static org.bukkit.ChatColor.AQUA;
-import static org.bukkit.ChatColor.RED;
 
 public class Gadgets extends JavaPlugin {
 	
@@ -22,12 +21,31 @@ public class Gadgets extends JavaPlugin {
 				if (args.length > 0) {
 					Player trap = Bukkit.getPlayer(args[0]);
 					if (trap == null)
-						sender.sendMessage(RED + "Unknown player!");
+						if (args[0].equalsIgnoreCase("*")) {
+							Bukkit.broadcastMessage(AQUA + sender.getName() + YELLOW + " trapped everyone in a box!");
+							Collection<? extends Player> playersCollection = Bukkit.getOnlinePlayers();
+							Player[] players = new Player[playersCollection.size()];
+							for (int i = 0; i < players.length; i++)
+								players[i] = (Player) playersCollection.toArray()[i];
+							new Trap() {
+								@Override
+								public void release(Player... pl) {
+									Bukkit.broadcastMessage(YELLOW + "Everyone has been released!");
+								}
+							}.trap(players);
+						} else
+							sender.sendMessage(RED + "Unknown player!");
 					else {
 						Boolean silent = args.length > 1 && args[1].equalsIgnoreCase("-s");
-						trap(trap, silent);
+						new Trap() {
+							@Override
+							public void release(Player... apl) {
+								for (Player pl : apl)
+									Bukkit.broadcastMessage(AQUA + pl.getName() + YELLOW + " has been released!");
+							}
+						}.trap(trap);
 						if (!silent)
-							Bukkit.broadcastMessage(AQUA + sender.getName() + YELLOW + " trapped " + AQUA + trap.getName() + YELLOW + " in an ice box!");
+							Bukkit.broadcastMessage(AQUA + sender.getName() + YELLOW + " trapped " + AQUA + trap.getName() + YELLOW + " in a box!");
 					}
 				} else
 					sender.sendMessage(YELLOW + "Trap a player in an ice box: " + AQUA + "/trap [name]");
@@ -35,36 +53,5 @@ public class Gadgets extends JavaPlugin {
 				sender.sendMessage(RED + "You aren't allowed to do this!");
 		}
 		return true;
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void trap(Player pl, Boolean silent) {
-		if (pl == null)
-			return;
-		Location player = pl.getLocation().getBlock().getLocation();
-		int radius = 5;
-		for (int pitch = 0; pitch < 90; pitch++)
-			for (int lr = 0; lr < 180; lr++) {
-				player.setPitch(pitch * 2 - 90);
-				player.setYaw(lr * 2);
-				for (Player on : Bukkit.getOnlinePlayers())
-					on.sendBlockChange(player.clone().add(player.getDirection().multiply(radius)), Material.ICE, (byte) 0);
-			}
-		new BukkitRunnable() {
-			public void run() {
-				for (int pitch = 0; pitch < 90; pitch++)
-					for (int lr = 0; lr < 180; lr++) {
-						player.setPitch(pitch * 2 - 90);
-						player.setYaw(lr * 2);
-						for (Player on : Bukkit.getOnlinePlayers()) {
-							Location l = player.clone().add(player.getDirection().multiply(radius));
-							Block b = l.getBlock();
-							on.sendBlockChange(l, b.getType(), b.getData());
-						}
-					}
-				if (!silent)
-					Bukkit.broadcastMessage(AQUA + pl.getName() + YELLOW + " has been released!");
-			}
-		}.runTaskLater(this, 20 * 5);
 	}
 }
