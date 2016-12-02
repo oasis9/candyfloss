@@ -1,0 +1,5 @@
+name: ActionsForAll
+main: dank.meme.ActionsForAll.EatAction
+version: 1
+commands:
+  eat:

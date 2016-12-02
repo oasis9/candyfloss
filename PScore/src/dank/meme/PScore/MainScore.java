@@ -33,7 +33,7 @@ public class MainScore extends JavaPlugin implements Listener {
 		Scoreboard main = manager.getNewScoreboard();
 		
 		Objective objective = main.registerNewObjective("main1", "dummy");
-		objective.setDisplayName(ChatColor.RED + "Cirrent Server");
+		objective.setDisplayName(ChatColor.RED + "Current Server");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
 		/* Possible team usage not needed for simple scoreboards
@@ -51,6 +51,7 @@ public class MainScore extends JavaPlugin implements Listener {
 		
 		Score score2 = objective.getScore(ChatColor.AQUA + pl.getName());
 		score2.setScore(0);
+		pl.setScoreboard(main);
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -59,10 +60,12 @@ public class MainScore extends JavaPlugin implements Listener {
 			return true;
 		}
 		Player pl = (Player) sender;
-		if (Bukkit.getName().equalsIgnoreCase("psdisable")){
+		if (cmd.getName().equalsIgnoreCase("psdisable")){
 			pl.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 			pl.sendMessage(ChatColor.RED + "Scoreboard Disabled");
-		
+		} else if (cmd.getName().equalsIgnoreCase("psenable")){
+			scoreboard(pl);
+			pl.sendMessage(ChatColor.GREEN + "Socreboard Enabled");
 		}
 		return true;
 	}		

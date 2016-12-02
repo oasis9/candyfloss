@@ -1,0 +1,7 @@
+name: AevaWayStones
+main: dank.meme.waystones.Waystones
+version: 1
+commands:
+  ws:
+  waystones:
+  waystone:
