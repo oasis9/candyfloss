@@ -1,4 +1,4 @@
-package dank.meme.waystones;
+package dank.meme.waystones.gui;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -16,6 +16,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import dank.meme.waystones.Waystone;
+import dank.meme.waystones.WaystoneType;
+import dank.meme.waystones.Waystones;
+
 public class WaystoneTypeGUI implements Listener {
 	
 	public WaystoneTypeGUI() { 
@@ -24,8 +28,11 @@ public class WaystoneTypeGUI implements Listener {
 	
 	public static Inventory get(WaystoneType wst) {
 		Inventory GUI = Bukkit.createInventory(null, 45, wst.getName());
-		
-		if (Waystones.getInstance().waystones.size() > 0) {
+		int count = 0;
+		for (Waystone ws : Waystones.getInstance().waystones.values())
+			if (ws.type.equals(wst))
+				count++;
+		if (count > 0) {
 			int i = 0;
 			for (Entry<String, Waystone> e : Waystones.getInstance().waystones.entrySet()) {
 				Waystone ws = e.getValue();
@@ -42,11 +49,11 @@ public class WaystoneTypeGUI implements Listener {
 			}
 		} else {
 			@SuppressWarnings("deprecation")
-			ItemStack none = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.RED.getData());
+			ItemStack none = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.RED.getWoolData());
 			ItemMeta meta = none.getItemMeta();
-		
+			
 			meta.setDisplayName(ChatColor.RED + "Uh Oh!");
-			meta.setLore(Arrays.asList(ChatColor.GRAY + "There are currently no " + wst.name().toLowerCase(), ChatColor.GRAY + "waystone to display."));
+			meta.setLore(Arrays.asList(ChatColor.GRAY + "There are currently no " + wst.name().toLowerCase(), ChatColor.GRAY + "waystones to display."));
 			none.setItemMeta(meta);
 			
 			GUI.setItem(22, none);
@@ -59,10 +66,17 @@ public class WaystoneTypeGUI implements Listener {
 	}
 	
 	@EventHandler
-	public void inventoryClickEvent(InventoryClickEvent e){
+	public void inventoryClickEvent(InventoryClickEvent e) {
+		Player pl = (Player) e.getWhoClicked();
 		Inventory inv = e.getInventory();
-		if (inv.getHolder() == null  && inv.getName().contains("Dungeons")){
-			e.setCancelled(true);
-		}
+		ItemStack item = e.getCurrentItem();
+		if (inv.getHolder() == null)
+			for (WaystoneType wst : WaystoneType.values())
+				if (inv.getName().equalsIgnoreCase(wst.name())) {
+					e.setCancelled(true);
+					for (Waystone ws : Waystones.getInstance().waystones.values())
+						if (ws.type.equals(wst) && item != null && item.hasItemMeta() && ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase(Waystones.getInstance().waystones.inverse().get(ws)))
+							pl.teleport(ws.loc);
+				}
 	}
 }	
