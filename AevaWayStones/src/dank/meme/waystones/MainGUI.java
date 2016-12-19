@@ -17,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class MainGUI implements Listener {
 	
 	public MainGUI() {
-		Bukkit.getPluginManager().registerEvents(this, Waystones.plugin);
+		Bukkit.getPluginManager().registerEvents(this, Waystones.getInstance());
 	}
 	
 	public static Inventory get() {
@@ -30,11 +30,11 @@ public class MainGUI implements Listener {
 		ItemMeta dungeonMeta = dungeon.getItemMeta();
 
 		spawnMeta.setDisplayName(ChatColor.BLUE + "Spawn");
-		spawnMeta.setLore(Arrays.asList(ChatColor.GREEN + "Many mysteries present",ChatColor.GREEN + "a curse on this land"));
+		spawnMeta.setLore(Arrays.asList(ChatColor.GRAY + "Many mysteries present", ChatColor.GRAY + "a curse on this land"));
 		spawn.setItemMeta(spawnMeta);
 		
 		dungeonMeta.setDisplayName(ChatColor.RED + "Dungeons");
-		dungeonMeta.setLore(Arrays.asList(ChatColor.GRAY + "A place full of evil",ChatColor.GRAY + "beasts"));
+		dungeonMeta.setLore(Arrays.asList(ChatColor.GRAY + "A place full of evil", ChatColor.GRAY + "beasts"));
 		dungeon.setItemMeta(dungeonMeta);
 		
 		mainGUI.setItem(21, spawn);

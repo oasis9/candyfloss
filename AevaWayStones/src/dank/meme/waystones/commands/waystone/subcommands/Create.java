@@ -24,9 +24,16 @@ public class Create extends StaffCommandUnit {
 	}
 	@Override
 	public void run(Player pl, String cmd, String[] args) {
-		if (args.length > 0)
-			Waystones.plugin.addWaystone(cmd, new Waystone(pl.getLocation(), WaystoneType.valueOf(args[0])));
-		else
+		if (args.length > 0) {
+			try {
+				Waystones.getInstance().addWaystone(cmd, new Waystone(pl.getLocation(), WaystoneType.valueOf(args[0].toUpperCase())));
+				pl.sendMessage(ChatColor.GREEN + "Successfully added waystone " + ChatColor.AQUA + cmd);
+			} catch (Exception ex){
+				pl.sendMessage((String[]) Arrays.asList(ChatColor.RED + "Unknown waystone type", ChatColor.RED + "Possible values:").toArray());
+				for (WaystoneType type : WaystoneType.values())
+					pl.sendMessage(ChatColor.AQUA + type.getName());
+			}
+		} else
 			run(pl);
 	}
 	

@@ -1,0 +1,6 @@
+sql:
+  url: 37.59.29.165
+  port: '3306'
+  database: aeva_land
+  username: servers
+  password: jTY2AwXOJ5mSNRos

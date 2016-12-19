@@ -1,8 +1,10 @@
 package dank.meme.waystones;
 
-import java.util.HashMap;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,33 +17,49 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import dank.meme.waystones.commands.CommandManager;
 import dank.meme.waystones.commands.waystone.WaystoneCommand;
+import net.md_5.bungee.api.ChatColor;
 
 public class Waystones extends JavaPlugin implements Listener, CommandExecutor {
 	
+	private static Waystones plugin;
 	private CommandManager cm;
-	public static Waystones plugin;
-	private Map<String, Waystone> waystones = new HashMap<String, Waystone>();
+	public BiMap<String, Waystone> waystones = HashBiMap.create();
+	public SQLManager sql;
 	
 	@Override
 	public void onEnable() {
 		plugin = this;
 		saveDefaultConfig();
-		FileConfiguration config = getConfig();
-		config.options().copyDefaults(true);
-		if (config.isConfigurationSection("waystones"))
-			for (String key : config.getConfigurationSection("waystones").getKeys(false))
-				try {
-					ConfigurationSection ws = config.getConfigurationSection("waystones." + key);
-					addWaystone(key, new Waystone(new Location(Bukkit.getWorld(ws.getString("world")), ws.getInt("x"), ws.getInt("y"), ws.getInt("z")), WaystoneType.valueOf(ws.getString("type"))));
-				} catch (Exception ex) {
-					Bukkit.getLogger().warning("Couldn't load Waystone " + key + "!");
-					ex.printStackTrace();
-				}
+		FileConfiguration c = getConfig();
+		c.options().copyDefaults(true);
 		cm = new CommandManager();
+		ConfigurationSection s = c.getConfigurationSection("sql");
+		sql = new SQLManager(s.getString("host"), s.getString("port"), s.getString("database"), s.getString("username"), s.getString("password"));
+		try {
+			ResultSet results = sql.get("waystones");
+			while (results.next()) {
+				waystones.put(results.getString("name"), new Waystone(new Location(Bukkit.getWorld(results.getString("world")), results.getInt("x"), results.getInt("y"), results.getInt("z"), results.getInt("yaw"), results.getInt("pich")), WaystoneType.valueOf(results.getString("type"))));
+			}
+			results = null;
+			results = sql.get("players");
+			while (results.next()) {
+				String waystone = results.getString("waystone");
+				if (waystones.containsKey(waystone))
+					waystones.get(waystone).found.add(UUID.fromString(results.getString("uuid")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		new WaystoneCommand(cm);
-		saveConfig();
+	}
+	
+	public static Waystones getInstance() {
+		return plugin;
 	}
 	
 	@Override
@@ -55,13 +73,7 @@ public class Waystones extends JavaPlugin implements Listener, CommandExecutor {
 	
 	public void addWaystone(String name, Waystone ws) {
 		waystones.put(name, ws);
-		ConfigurationSection config = getConfig().getConfigurationSection("waystones." + name);
-		config.set("world", ws.loc.getWorld().getName());
-		config.set("x", ws.loc.getX());
-		config.set("y", ws.loc.getY());
-		config.set("z", ws.loc.getZ());
-		config.set("type", ws.type);
-		saveConfig();
+		sql.insert("waystones", Arrays.asList("name", "type", "world", "x", "y", "z"), Arrays.asList(waystones.inverse().get(ws), ws.type.name(), ws.loc.getWorld().getName(), ws.loc.getBlockX() + "", ws.loc.getBlockY() + "", ws.loc.getBlockZ() + "", ws.loc.getYaw() + "", ws.loc.getPitch() + ""));
 	}
 	
 	public static boolean containsIgnoreCase(List<String> haystack, String needle) {
@@ -71,5 +83,10 @@ public class Waystones extends JavaPlugin implements Listener, CommandExecutor {
 			if (st.equalsIgnoreCase(needle))
 				return true;
 		return false;
+	}
+
+	public static void sendMessage(Player pl, String... message) {
+		for (String msg : message)
+			pl.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
 	}
 }
