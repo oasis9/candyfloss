@@ -4,12 +4,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import dank.meme.waystones.MainGUI;
 import dank.meme.waystones.WaystoneType;
-import dank.meme.waystones.WaystoneTypeGUI;
 import dank.meme.waystones.Waystones;
 import dank.meme.waystones.commands.CommandManager;
 import dank.meme.waystones.commands.CommandUnit;
+import dank.meme.waystones.gui.MainGUI;
+import dank.meme.waystones.gui.WaystoneTypeGUI;
 
 public class Open extends CommandUnit {
 	

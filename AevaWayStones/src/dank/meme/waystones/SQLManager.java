@@ -5,11 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -54,32 +52,25 @@ public class SQLManager implements Listener {
 	}
 	
 	public synchronized void statement(String statement) {
-		open();
 		try (PreparedStatement stmt = connection.prepareStatement(
 				statement)) {
 			stmt.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			close();
 		}
 	}
 
 	public synchronized ResultSet get(String table) {
-		open();
 		try {
 			PreparedStatement statement = connection
 					.prepareStatement("SELECT * FROM `" + table + "`");
 			return statement.executeQuery();
 		} catch (SQLException ex) {
 			return null;
-		} finally {
-			close();
 		}
 	}
 
 	public synchronized ResultSet get(String table, Map<String, String> fields) {
-		open();
 		try {
 			String where = " WHERE ";
 			for (Entry<String, String> e : fields.entrySet())
@@ -89,13 +80,10 @@ public class SQLManager implements Listener {
 			return statement.executeQuery();
 		} catch (SQLException ex) {
 			return null;
-		} finally {
-			close();
 		}
 	}
 
 	public synchronized Object advancedGet(String field, String table, String where, Object equal) {
-		open();
 		try {
 			PreparedStatement statement = connection
 					.prepareStatement("SELECT " + field + " FROM `" + table + "` WHERE " + where + "=?;");
@@ -110,39 +98,18 @@ public class SQLManager implements Listener {
 			return val;
 		} catch (SQLException ex) {
 			return "";
-		} finally {
-			close();
 		}
 	}
 
-	public synchronized void insert(String table, List<String> fields, List<String> values) {
-		open();
-		try {
-			PreparedStatement statement_settings = connection
-					.prepareStatement("INSERT INTO `" + table + "` (" + StringUtils.join(fields.toArray(), ",") + ") values(" + StringUtils.join(values.toArray(), ",") + ");");
-			statement_settings.execute();
-			statement_settings.close();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			close();
-		}
-	}	
-
 	public synchronized void set(Player player, String field, String table, Object value) {
-		open();
 		try {
 			PreparedStatement statement = connection
 					.prepareStatement("UPDATE `" + table + "` SET " + field + "=? WHERE uuid=?;");
 			statement.setObject(1, value);
 			statement.setString(2, String.valueOf(player.getUniqueId()));
-
 			statement.executeUpdate();
-
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-		} finally {
-			close();
 		}
 	}
 }
